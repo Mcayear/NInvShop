@@ -3,6 +3,7 @@ package cn.vusv.ninvshop;
 import cn.nukkit.Server;
 import cn.nukkit.lang.PluginI18n;
 import cn.nukkit.lang.PluginI18nManager;
+import cn.nukkit.permission.Permission;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 import cn.vusv.ninvshop.command.NInvShopCommand;
@@ -11,10 +12,6 @@ import cn.vusv.ninvshop.config.ShopPagesData;
 
 import java.io.File;
 
-/**
- * author: MagicDroidX
- * NukkitExamplePlugin Project
- */
 public class NInvShop extends PluginBase {
     public static NInvShop INSTANCE;
     public static PluginI18n I18N;
@@ -25,6 +22,8 @@ public class NInvShop extends PluginBase {
         INSTANCE = this;
         //register the plugin i18n
         I18N = PluginI18nManager.register(this);
+        Server.getInstance().getPluginManager().addPermission(new Permission("plugin.ninvshop", "NInvShop 命令权限", "true"));
+        Server.getInstance().getPluginManager().addPermission(new Permission("plugin.ninvshop.admin", "NInvShop 管理员命令权限", "op"));
         //register the command of plugin
         this.getServer().getCommandMap().register("NInvShop", new NInvShopCommand());
 

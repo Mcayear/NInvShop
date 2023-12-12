@@ -1,16 +1,23 @@
 package cn.vusv.ninvshop;
 
+import RcRPG.Main;
+import RcRPG.RPG.Armour;
+import RcRPG.RPG.Weapon;
 import cn.ankele.plugin.MagicItem;
 import cn.ankele.plugin.bean.ItemBean;
 import cn.ankele.plugin.utils.Tools;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.ConfigSection;
+import cn.vusv.ninvshop.config.PlayerBuyData;
+import cn.vusv.ninvshop.config.ShopPagesData;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
 
-import static java.lang.Integer.parseInt;
 import static cn.ankele.plugin.utils.Commands.createItem;
+import static java.lang.Integer.parseInt;
 
 public class Utils {
     static public long getNowTime() {
@@ -54,12 +61,84 @@ public class Utils {
                 NInvShop.INSTANCE.getLogger().warning("你没有使用 RcRPG、NWeapon 插件却在试图获取它的物品：" + str);
                 return null;
             }
-            String[] args = arr[1].split(" ");
+            String[] args = arr[1].split(" ");//Main.loadWeapon
+            String type = args[0];
+            String itemName = args[1];
+            int count = 1;
+
+            if (args.length > 2) {
+                count = parseInt(args[2]);
+            }
+
+            switch (type) {
+                case "护甲":
+                case "防具":
+                case "armor": {
+                    if (Main.loadArmour.containsKey(itemName)) {
+                        return Armour.getItem(itemName, count);
+                    }
+                    break;
+                }
+                case "武器":
+                case "weapon": {
+                    if (Main.loadWeapon.containsKey(itemName)) {
+                        return Weapon.getItem(itemName, count);
+                    }
+                    break;
+                }
+                case "宝石":
+                case "gem": {
+                    break;
+                }
+                case "饰品":
+                case "jewelry": {
+                    break;
+                }
+                case "锻造图": {
+                    break;
+                }
+                case "宝石券":
+                case "精工石":
+                case "强化石":
+                case "锻造石": {
+                    break;
+                }
+            }
+            return null;
             //return nWeapon.onlyNameGetItem(args[0], args[1], args[2], null);
         } else {
             NInvShop.INSTANCE.getLogger().warning("物品配置有误：" + str);
         }
         return null;
+    }
+
+    static public int defaultVaule(int value) {
+        if (value == 0) {
+            return 1;
+        }
+        return value;
+    }
+
+    static public int compLimBuyCount(Player player, ShopPagesData.ItemData itemData) {
+        int limBuyCount = 0;
+        ConfigSection pBuyData = PlayerBuyData.getPlayerData(player.getName(), itemData.getBuyLimits().getUid());
+        int limHour = defaultVaule(itemData.getBuyLimits().getRefreshTimeDay()) + defaultVaule(itemData.getBuyLimits().getRefreshTimeDay()) * 24;
+        if (pBuyData.exists("buyCount")) {// 判断是否有玩家购买数据
+            int canBuyCount = itemData.getBuyLimits().getMaxNum() - pBuyData.getInt("buyCount");
+            if (canBuyCount < 1) {// 判断能否继续购买物品
+                if ((int) ((getNowTime() - pBuyData.getLong("buyTime")) / 36e5) > limHour) {// 判断时间
+                    PlayerBuyData.setPlayerData(player.getName(), itemData.getBuyLimits().getUid(), 0, 0);
+                    limBuyCount = itemData.getBuyLimits().getMaxNum();
+                } else {
+                    limBuyCount = 0;
+                }
+            } else {
+                limBuyCount = canBuyCount;
+            }
+        } else {
+            limBuyCount = itemData.getBuyLimits().getMaxNum();
+        }
+        return limBuyCount;
     }
 
 }

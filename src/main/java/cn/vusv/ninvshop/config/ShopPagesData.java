@@ -11,9 +11,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ShopPagesData {
-    static public LinkedHashMap<String, ShopPagesData> ShopPagesMap = new LinkedHashMap<>();
+    static public LinkedHashMap<String, ShopPagesData> ShopPagesMap;
 
     static public void init() {
+        ShopPagesMap = new LinkedHashMap<>();
         File[] files = new File(NInvShop.INSTANCE.getDataFolder() + "/ShopPages").listFiles();
 
         for (File file : files) {
@@ -59,6 +60,7 @@ public class ShopPagesData {
 
     public static class ItemData {
         private String showitem;
+        private int price;
         private int bulkBuy;
         private String need;
         private String needString;
@@ -68,6 +70,7 @@ public class ShopPagesData {
 
         public ItemData(Map<String, Object> data) {
             this.showitem = (String) data.getOrDefault("showitem", "");
+            this.price = (int) data.getOrDefault("price", 0);
             this.bulkBuy = (int) data.getOrDefault("bulk_buy", 1);
             this.need = (String) data.getOrDefault("need", "");
             this.needString = (String) data.getOrDefault("needString", "");
@@ -80,6 +83,10 @@ public class ShopPagesData {
 
         public String getShowitem() {
             return showitem;
+        }
+
+        public int getPrice() {
+            return price;
         }
 
         public int getBulkBuy() {

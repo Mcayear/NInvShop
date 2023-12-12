@@ -8,8 +8,9 @@ import java.io.File;
 import java.util.LinkedHashMap;
 
 public class PlayerBuyData {
-    static public LinkedHashMap<String, Config> PlayerBuyMap = new LinkedHashMap<>();
+    static public LinkedHashMap<String, Config> PlayerBuyMap;
     static public void init() {
+        PlayerBuyMap = new LinkedHashMap<>();
         File[] files = new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData").listFiles();
 
         for (File file : files) {

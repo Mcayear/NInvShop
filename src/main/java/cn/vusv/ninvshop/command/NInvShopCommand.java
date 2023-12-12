@@ -1,6 +1,7 @@
 package cn.vusv.ninvshop.command;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.data.CommandEnum;
@@ -12,11 +13,14 @@ import cn.nukkit.command.tree.node.PlayersNode;
 import cn.nukkit.command.utils.CommandLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.vusv.ninvshop.NInvShop;
+import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
 import cn.vusv.ninvshop.shoppage.ShopPageSend;
 
 import java.util.List;
 import java.util.Map;
+
+import static cn.vusv.ninvshop.NInvShop.I18N;
 
 
 public class NInvShopCommand extends PluginCommand<NInvShop> {
@@ -33,6 +37,8 @@ public class NInvShopCommand extends PluginCommand<NInvShop> {
         //Set the alias for this command
         this.setAliases(new String[]{"shop"});
 
+        this.setPermission("plugin.ninvshop");
+
         /*
          * The following begins to set the command parameters, first need to clean,
          * because NK will fill in several parameters by default, we do not need.
@@ -45,7 +51,15 @@ public class NInvShopCommand extends PluginCommand<NInvShop> {
          * 2.Each subcommand cannot be repeated.
          * 3.Optional arguments must be used at the end of the subcommand or consecutively.
          */
+        this.getCommandParameters().put("reload-config", new CommandParameter[]{
+                CommandParameter.newEnum("reload", false, new CommandEnum("reloadAction", "reload"))
+        });
+        this.getCommandParameters().put("test-shop", new CommandParameter[]{
+                CommandParameter.newEnum("test", false, new CommandEnum("testAction", "test")),
+                CommandParameter.newType("pageName", false, CommandParamType.STRING)
+        });
         this.getCommandParameters().put("open-shop", new CommandParameter[]{
+                CommandParameter.newEnum("open", false, new CommandEnum("openAction", "open")),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING),
                 CommandParameter.newType("player", true, CommandParamType.TARGET, new PlayersNode())
         });
@@ -99,15 +113,31 @@ public class NInvShopCommand extends PluginCommand<NInvShop> {
     public int execute(CommandSender sender, String commandLabel, Map.Entry<String, ParamList> result, CommandLogger log) {
         var list = result.getValue();
         switch (result.getKey()) {
-            case "open-shop" -> {
-                String pageName = list.getResult(0);
+            case "reload-config" -> {
+                PlayerBuyData.init();
+                ShopPagesData.init();
+                log.addSuccess(TextFormat.GREEN + I18N.tr(Server.getInstance().getLanguageCode(), "ninvshop.reload_success")).output();
+                return 1;
+            }
+            case "test-shop" -> {
+                String pageName = list.getResult(1);
                 if (!ShopPagesData.ShopPagesMap.containsKey(pageName)) {
-                    log.addError(TextFormat.RED + "%ninvshop.not_found_page%", pageName).output();
+                    log.addError(TextFormat.RED + I18N.tr(Server.getInstance().getLanguageCode(), "ninvshop.not_found_page", pageName)).output();
                     return 0;
                 }
                 ShopPagesData shopPage = ShopPagesData.ShopPagesMap.get(pageName);
-                if (list.hasResult(1)) {
-                    List<Player> players = list.getResult(1);
+                new ShopPageSend(pageName).sendPageToPlayer(shopPage, (Player) sender);
+                return 1;
+            }
+            case "open-shop" -> {
+                String pageName = list.getResult(1);
+                if (!ShopPagesData.ShopPagesMap.containsKey(pageName)) {
+                    log.addError(TextFormat.RED + I18N.tr(Server.getInstance().getLanguageCode(), "ninvshop.not_found_page", pageName)).output();
+                    return 0;
+                }
+                ShopPagesData shopPage = ShopPagesData.ShopPagesMap.get(pageName);
+                if (list.hasResult(2)) {
+                    List<Player> players = list.getResult(2);
                     if (players.isEmpty()) {
                         log.addNoTargetMatch().output();
                         return 0;
@@ -118,40 +148,9 @@ public class NInvShopCommand extends PluginCommand<NInvShop> {
                 }
                 return 1;
             }
-            case "pattern2" -> {
-                System.out.println("execute say2");
-                /*
-                 * You need to use the corresponding parameter index to get the parsing value,
-                 * Each different parameter corresponds to a different return value type,
-                 * There will be a document for you to see
-                 */
-                List<Player> players = list.getResult(1);
-
-                //For optional parameters, you must judge if they exist before you get the result
-                if (list.hasResult(2)) {
-                    String message = list.getResult(2);
-                    /*
-                     * 1.log.addMessage output red color by default.
-                     *
-                     * 2.Using the TextFormat to add color characters, note that language key needs to be separated by %
-                     * All text that is not related to the language key must be separated by %
-                     *
-                     * 3.addMessage will automatically translate the language key,
-                     * and addSuccess will output white by default,
-                     * and addError will output red by default,
-                     * None of the text is translated except for the client-language key.
-                     */
-                    log.addMessage(TextFormat.WHITE + "%exampleplugin.helloworld% this is message:" + message, players.stream().map(Player::getName).toList().toString()).output();
-                } else {
-                    log.addMessage(TextFormat.WHITE + "%exampleplugin.helloworld", players.stream().map(Player::getName).toList().toString()).output();
-                }
-            }
-            default -> {
-                return 0;
-            }
         }
         //A return of 0 means failure, and a return of 1 means success.
         //This value is applied to the comparator next to the commandblock.
-        return 1;
+        return 0;
     }
 }

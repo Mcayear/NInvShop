@@ -3,6 +3,8 @@
 # Support for multilingual text of parameters,such as
 # testplugin.helloworld=Hello {%0}!
 # {%n} will be populated with arguments with index n
+ninvshop.reload_success=Configuration file reloaded successfully!
+ninvshop.shop_page_title=Shop - {%0}
 ninvshop.not_found_page=Not found {%0}！
 exampleplugin.helloworld=Hello {%0}!
 exampleplugin.examplecommand.description=This is Test command.

@@ -13,6 +13,6 @@ website: https://github.com/PowerNukkitX/ExamplePlugin-Maven
 # These dependencies are required for the plugin to start.
 #depend: ["OtherPlugin", "ThisPlugin"]
 # These dependencies are not required.
-softdepend: ["MagicItem"]
+softdepend: ["MagicItem", "RcRPG"]
 # Log prefix in console
 prefix: "NInvShop"
