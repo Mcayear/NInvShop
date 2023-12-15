@@ -3,6 +3,7 @@ package cn.vusv.ninvshop.config;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
 import cn.vusv.ninvshop.NInvShop;
+import cn.vusv.ninvshop.Utils;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -20,32 +21,32 @@ public class PlayerBuyData {
         }
     }
 
-    static public ConfigSection setPlayerData(String playerName, String shopName, int buyCount, long buyTime) {
+    static public ConfigSection setPlayerData(String playerName, String limitUid, int buyCount, long buyTime) {
         Config config = PlayerBuyMap.getOrDefault(playerName, new Config(
                 new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
                 Config.YAML,
                 //Default values (not necessary)
                 new ConfigSection()
         ));
-        config.set(shopName, new ConfigSection(new LinkedHashMap<>() {
+        config.set(limitUid, new ConfigSection(new LinkedHashMap<>() {
             {
                 put("buyCount", buyCount);
                 put("buyTime", buyTime); //you can also put other standard objects!
             }
         }));
         config.save();
-        return config.getSection(shopName);
+        return config.getSection(limitUid);
     }
 
-    static public ConfigSection getPlayerData(String playerName, String shopName) {
+    static public ConfigSection getPlayerData(String playerName, String limitUid) {
         Config config = PlayerBuyMap.getOrDefault(playerName, new Config(
                 new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
                 Config.YAML,
                 //Default values (not necessary)
                 new ConfigSection()
         ));
-        if (config.exists(shopName)) {
-            return config.getSection(shopName);
+        if (config.exists(limitUid)) {
+            return config.getSection(limitUid);
         } else {
             return new ConfigSection(new LinkedHashMap<>() {
                 {
@@ -54,6 +55,16 @@ public class PlayerBuyData {
                 }
             });
         }
+    }
+
+    static public ConfigSection addPlayerData(String playerName, String limitUid, int count) {
+        ConfigSection cfg = getPlayerData(playerName, limitUid);
+        cfg.set("buyCount", cfg.getInt("buyCount", 0) + count);
+        if (cfg.getLong("buyTime", 0) > 0) {
+            cfg.set("buyTime", Utils.getNowTime());
+        }
+        setPlayerData(playerName, limitUid, cfg.getInt("buyCount"), cfg.getLong("buyTime"));
+        return cfg;
     }
 
 }

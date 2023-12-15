@@ -7,6 +7,7 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 import cn.vusv.ninvshop.command.NInvShopCommand;
+import cn.vusv.ninvshop.config.McrmbConfig;
 import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
 
@@ -22,6 +23,7 @@ public class NInvShop extends PluginBase {
         INSTANCE = this;
         //register the plugin i18n
         I18N = PluginI18nManager.register(this);
+
         Server.getInstance().getPluginManager().addPermission(new Permission("plugin.ninvshop", "NInvShop 命令权限", "true"));
         Server.getInstance().getPluginManager().addPermission(new Permission("plugin.ninvshop.admin", "NInvShop 管理员命令权限", "op"));
         //register the command of plugin
@@ -34,17 +36,16 @@ public class NInvShop extends PluginBase {
     public void onEnable() {
         this.getLogger().info(TextFormat.DARK_GREEN + "I've been enabled!");
 
-        //Use the plugin's i18n output
-        this.getLogger().info(I18N.tr(Server.getInstance().getLanguageCode(), "exampleplugin.helloworld", "世界"));
-
         //Save resources
         init();
     }
 
     public void init() {
         this.saveResource("config.yml");
+        this.saveResource("mcrmbConfig.yml");
         loadPlayerBuyData();
         loadShopPages();
+        McrmbConfig.init();
     }
 
     private void loadPlayerBuyData() {

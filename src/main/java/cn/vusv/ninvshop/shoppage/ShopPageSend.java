@@ -11,15 +11,14 @@ import com.nukkitx.fakeinventories.inventory.DoubleChestFakeInventory;
 import com.nukkitx.fakeinventories.inventory.FakeSlotChangeEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static cn.vusv.ninvshop.NInvShop.I18N;
-import static cn.vusv.ninvshop.NInvShop.INSTANCE;
 import static cn.vusv.ninvshop.Utils.compLimBuyCount;
 import static cn.vusv.ninvshop.Utils.parseItemString;
 
 public class ShopPageSend {
+    private ShopPagesData shopPage;
     private String pageName;
     private List<ShopPagesData.ItemData> itemList;
     public ShopPageSend(String pageName) {
@@ -27,7 +26,8 @@ public class ShopPageSend {
     }
 
     public void sendPageToPlayer(ShopPagesData shopPage, Player player) {
-        itemList = shopPage.getItemList();
+        this.shopPage = shopPage;
+        this.itemList = shopPage.getItemList();
 
         ChestFakeInventory inv;
         if (itemList.size() > 25) {
@@ -38,18 +38,20 @@ public class ShopPageSend {
 
         for (int i = 0; i < inv.getSize() && i < itemList.size(); i++) {
             ShopPagesData.ItemData itemData = itemList.get(i);
+
             Item item = parseItemString(itemData.getShowitem());
             if (item == null) {
                 item = Item.fromString("minecraft:stone");
             }
-            List<String> loreList = Arrays.asList(item.getLore());
-
-            if (loreList.isEmpty()) {
-                loreList = new ArrayList<>();
+            List<String> loreList = new ArrayList<>();
+            for (String str : item.getLore()) {
+                loreList.add(str);
             }
-            loreList.add("\n");
+
+            loreList.add("");
             if (itemData.getPrice() == 0) {
-                loreList.add("§r§f需求: " + itemData.getNeed());
+                loreList.add("§r§f需求: ");
+                loreList.add(itemData.getShowNeed());
             } else {
                 loreList.add("§r§f售价: " + itemData.getPrice());
             }
@@ -84,7 +86,7 @@ public class ShopPageSend {
         Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
             @Override
             public void onRun(int i) {
-                new sendBuyWin(player, itemList.get(slot), event.getAction().getSourceItem());
+                new sendBuyWin(player, shopPage, itemList.get(slot), event.getAction().getSourceItem());
             }
         }, 10);
     }

@@ -20,9 +20,11 @@ public class ShopPagesData {
         for (File file : files) {
             if (!file.isFile()) continue;
             String fileName = file.getName().replace(".yml", "");
-            ShopPagesMap.put(fileName, new ShopPagesData(new Config(file, Config.YAML)));
+            ShopPagesMap.put(fileName, new ShopPagesData(fileName, new Config(file, Config.YAML)));
         }
     }
+
+    private String shopName = "";
 
     private String row = "";
 
@@ -31,7 +33,8 @@ public class ShopPagesData {
     private boolean isOnlyConsole = false;
 
     private List<ItemData> itemList;
-    public ShopPagesData(Config config) {
+    public ShopPagesData(String fileName, Config config) {
+        this.shopName = fileName;
         this.row = config.getString("row", "");
         this.icon = config.getString("icon", "");
         this.isOnlyConsole = config.getBoolean("onlyConsole", false);
@@ -42,6 +45,9 @@ public class ShopPagesData {
 
     }
 
+    public String getShopName() {
+        return shopName;
+    }
     public String getRow() {
         return row;
     }
@@ -62,8 +68,8 @@ public class ShopPagesData {
         private String showitem;
         private int price;
         private int bulkBuy;
+        private String showNeed;
         private String need;
-        private String needString;
         private List<String> execcmd;
         private boolean onlycmd;
         private BuyLimits buyLimits;
@@ -72,8 +78,8 @@ public class ShopPagesData {
             this.showitem = (String) data.getOrDefault("showitem", "");
             this.price = (int) data.getOrDefault("price", 0);
             this.bulkBuy = (int) data.getOrDefault("bulk_buy", 1);
+            this.showNeed = (String) data.getOrDefault("showNeed", "");
             this.need = (String) data.getOrDefault("need", "");
-            this.needString = (String) data.getOrDefault("needString", "");
             this.execcmd = (List<String>) data.getOrDefault("execcmd", List.of());
             this.onlycmd = (boolean) data.getOrDefault("onlycmd", false);
             if (data.containsKey("buyLimits")) {
@@ -93,12 +99,12 @@ public class ShopPagesData {
             return bulkBuy;
         }
 
-        public String getNeed() {
-            return need;
+        public String getShowNeed() {
+            return showNeed;
         }
 
-        public String getNeedString() {
-            return needString;
+        public String getNeed() {
+            return need;
         }
 
         public List<String> getExeccmd() {

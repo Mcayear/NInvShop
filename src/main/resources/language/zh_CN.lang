@@ -3,6 +3,9 @@
 # Support for multilingual text of parameters,such as
 # testplugin.helloworld=Hello {%0}!
 # {%n} will be populated with arguments with index n
+ninvshop.item.purchase_failed=[{%0}] §c需求不满足
+ninvshop.item.purchase_success=[{%0}] §a购买成功，欢迎下次光临
+ninvshop.need_failed_msg=需满足：{%0}
 ninvshop.reload_success=配置文件重载成功！
 ninvshop.shop_page_title=商店 - {%0}
 ninvshop.not_found_page=页面 {%0} 不存在！

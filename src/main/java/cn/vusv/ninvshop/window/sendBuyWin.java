@@ -1,27 +1,34 @@
 package cn.vusv.ninvshop.window;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.EventHandler;
+import cn.nukkit.Server;
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementLabel;
 import cn.nukkit.form.element.ElementSlider;
+import cn.nukkit.form.handler.FormResponseHandler;
 import cn.nukkit.form.response.FormResponseCustom;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.item.Item;
+import cn.vusv.ninvshop.ExamineNeed;
+import cn.vusv.ninvshop.NInvShop;
+import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
+import cn.vusv.ninvshop.shoppage.ShopPageSend;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.vusv.ninvshop.NInvShop.I18N;
 import static cn.vusv.ninvshop.Utils.compLimBuyCount;
 
 public class sendBuyWin implements Listener { //一般实际开发中不在这个类中写监听器
-    public static final int UID = 7800101;
+    private ShopPagesData shopPage;
     private ShopPagesData.ItemData itemData;
     private Item slotItem;
 
-    public sendBuyWin(Player player, ShopPagesData.ItemData itemData, Item slotItem) {
+    public sendBuyWin(Player player, ShopPagesData shopPage_, ShopPagesData.ItemData itemData, Item slotItem) {
+        this.shopPage = shopPage_;
         this.itemData = itemData;
         this.slotItem = slotItem;
         FormWindowCustom form;
@@ -31,20 +38,58 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
             int limBuyCount = compLimBuyCount(player, itemData);
             form = buyLimitsFrom(new FormWindowCustom("Shop - 批量购买"), limBuyCount);
         }
-        player.showFormWindow(form, UID);
+        form.addHandler(FormResponseHandler.withoutPlayer(ignored -> {
+            if (form.wasClosed()) {
+                return;
+            }
+            FormResponseCustom response = form.getResponse();
+            int slider = (int) response.getSliderResponse(1);
+            if (slider < 0) {
+                new ShopPageSend(shopPage.getShopName()).sendPageToPlayer(shopPage, player);
+                return;
+            }
+            player.sendMessage("购买数量为: " + slider);
+            slider = 1;// TODO: 实现 %total% 变量
+            if (!itemData.getNeed().isEmpty()) {
+                if (!ExamineNeed.examineNeed(itemData.getNeed().split("\\|\\|"), player)) {
+                    player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.item.purchase_failed", shopPage.getShopName()));
+                    return;
+                }
+                // 需求满足
+                player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
+                if (itemData.getBuyLimits() != null) {
+                    PlayerBuyData.addPlayerData(player.getName(), itemData.getBuyLimits().getUid(), slider);
+                }
+            } else {
+                NInvShop.INSTANCE.getLogger().info("当不是needString时，如何处理...");
+                return;
+            }
+            for (String value : itemData.getExeccmd()) {
+                String[] arr = value.split("@@");
+                String cmd = arr[0].replace("%player%", player.getName()).replace("%totalNum%", String.valueOf(slider));
+                CommandSender execer;
+                if (arr[1].equals("player")) {
+                    execer = player;
+                } else {
+                    execer = Server.getInstance().getConsoleSender();
+                }
+                Server.getInstance().executeCommand(execer, cmd);
+            }
+        }));
+        player.showFormWindow(form);
     }
 
     public FormWindowCustom buyLimitsFrom(FormWindowCustom form, int limBuyCount) {
         List<String> label = new ArrayList<>();
         if (slotItem.getCustomName().isEmpty()) {
-            label.add("物品名: " + slotItem.getName()+"§r");
+            label.add("物品名: " + slotItem.getName() + "§r");
         } else {
-            label.add("物品名: " + slotItem.getCustomName()+"§r");
+            label.add("物品名: " + slotItem.getCustomName() + "§r");
         }
-        if (false) label.add("每份价格: data.price");
-        if (!itemData.getNeed().isEmpty()) {
+        if (false) label.add("每份价格: "+itemData.getPrice());
+        if (!itemData.getShowNeed().isEmpty()) {
             label.add("每份需求: ");
-            label.add(itemData.getNeed());
+            label.add(itemData.getShowNeed());
             label.add("每份数量: " + slotItem.getCount());
         }
         if (limBuyCount == 0) {
@@ -61,14 +106,14 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
     public FormWindowCustom buyFrom(FormWindowCustom form) {
         List<String> label = new ArrayList<>();
         if (slotItem.getCustomName().isEmpty()) {
-            label.add("物品名: " + slotItem.getName()+"§r");
+            label.add("物品名: " + slotItem.getName() + "§r");
         } else {
-            label.add("物品名: " + slotItem.getCustomName()+"§r");
+            label.add("物品名: " + slotItem.getCustomName() + "§r");
         }
         if (false) label.add("每份价格: data.price");
-        if (!itemData.getNeed().isEmpty()) {
+        if (!itemData.getShowNeed().isEmpty()) {
             label.add("每份需求: ");
-            label.add(itemData.getNeed());
+            label.add(itemData.getShowNeed());
             label.add("每份数量: " + slotItem.getCount());
         }
         form.addElement(new ElementLabel(String.join("\n", label)));
@@ -76,18 +121,5 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
         // 添加一个水平滑块_1 (text, 最小值, 最大值, 滑动最小步数)
         form.addElement(new ElementSlider("购买份数", 0, itemData.getBulkBuy(), 1));  // 组件角标: 3
         return form;
-    }
-
-    // 监听器部分
-    @EventHandler
-    public void onFormResponse(PlayerFormRespondedEvent event) {
-        Player player = event.getPlayer();
-        int id = event.getFormID(); //这将返回一个form的唯一标识`id`
-        if (id != UID) return;
-        FormResponseCustom response = (FormResponseCustom) event.getResponse();
-        float slider = response.getSliderResponse(1);
-        if (slider < 1) {
-            player.sendMessage("购买数量为: "+slider);
-        }
     }
 }
