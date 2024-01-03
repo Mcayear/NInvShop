@@ -16,6 +16,7 @@ import cn.vusv.ninvshop.NInvShop;
 import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
 import cn.vusv.ninvshop.shoppage.ShopPageSend;
+import cn.vusv.ninvshop.window.sendShopListWin;
 
 import java.util.List;
 import java.util.Map;
@@ -147,6 +148,13 @@ public class NInvShopCommand extends PluginCommand<NInvShop> {
                     new ShopPageSend(pageName).sendPageToPlayer(shopPage, (Player) sender);
                 }
                 return 1;
+            }
+            case "list-shop" -> {
+                if (!sender.isPlayer() || !sender.isOp()) {
+                    log.addError("仅支持玩家执行").output();
+                    return 0;
+                }
+                new sendShopListWin((Player) sender);
             }
         }
         //A return of 0 means failure, and a return of 1 means success.

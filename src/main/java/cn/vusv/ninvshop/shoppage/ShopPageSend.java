@@ -1,5 +1,6 @@
 package cn.vusv.ninvshop.shoppage;
 
+import RcRPG.Main;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
@@ -39,6 +40,9 @@ public class ShopPageSend {
         for (int i = 0; i < inv.getSize() && i < itemList.size(); i++) {
             ShopPagesData.ItemData itemData = itemList.get(i);
 
+            if (itemData.getShowitem().isEmpty()) {
+                Main.getInstance().getLogger().info(shopPage.getShopName()+"页面的 showItem 为空");// TODO: test
+            }
             Item item = parseItemString(itemData.getShowitem());
             if (item == null) {
                 item = Item.fromString("minecraft:stone");

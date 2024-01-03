@@ -1,5 +1,6 @@
 package cn.vusv.ninvshop.window;
 
+import RcRPG.Main;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -12,6 +13,8 @@ import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.item.Item;
 import cn.vusv.ninvshop.ExamineNeed;
 import cn.vusv.ninvshop.NInvShop;
+import cn.vusv.ninvshop.Utils;
+import cn.vusv.ninvshop.adapter.Econ;
 import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
 import cn.vusv.ninvshop.shoppage.ShopPageSend;
@@ -21,6 +24,7 @@ import java.util.List;
 
 import static cn.vusv.ninvshop.NInvShop.I18N;
 import static cn.vusv.ninvshop.Utils.compLimBuyCount;
+import static cn.vusv.ninvshop.Utils.parseItemString;
 
 public class sendBuyWin implements Listener { //一般实际开发中不在这个类中写监听器
     private ShopPagesData shopPage;
@@ -44,7 +48,7 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
             }
             FormResponseCustom response = form.getResponse();
             int slider = (int) response.getSliderResponse(1);
-            if (slider < 0) {
+            if (slider < 1) {
                 new ShopPageSend(shopPage.getShopName()).sendPageToPlayer(shopPage, player);
                 return;
             }
@@ -60,13 +64,22 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
                 if (itemData.getBuyLimits() != null) {
                     PlayerBuyData.addPlayerData(player.getName(), itemData.getBuyLimits().getUid(), slider);
                 }
-            } else {
-                NInvShop.INSTANCE.getLogger().info("当不是needString时，如何处理...");
-                return;
+            } else {// 不走 need 通道
+                Econ pEcon = new Econ(player);
+                if (itemData.getPrice() > 0 && itemData.getPrice() > pEcon.getMoney()) {
+                    player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.item.not_enough_money", String.valueOf(itemData.getPrice() - pEcon.getMoney())));
+                }
+            }
+            if (!itemData.isOnlycmd()) {
+                Item item = parseItemString(itemData.getShowitem());
+                if (item.isNull()) {
+                    player.sendMessage("§c物品 "+itemData.getShowitem()+" 不存在");
+                }
+                Utils.addItemToPlayer(player, item);
             }
             for (String value : itemData.getExeccmd()) {
                 String[] arr = value.split("@@");
-                String cmd = arr[0].replace("%player%", player.getName()).replace("%totalNum%", String.valueOf(slider));
+                String cmd = arr[0].replace("%player%", player.getName()).replace("%total%", String.valueOf(slider));
                 CommandSender execer;
                 if (arr[1].equals("player")) {
                     execer = player;

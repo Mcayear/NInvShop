@@ -6,10 +6,10 @@ import cn.vusv.ninvshop.NInvShop;
 import java.io.File;
 
 public class McrmbConfig {
-    static public String website = "";
-    static public String sid = "";
-    static public String key = "";
-    static public void init() {
+    public static String website = "";
+    public static String sid = "";
+    public static String key = "";
+    public static void init() {
         Config cfg = new Config(NInvShop.INSTANCE.getDataFolder()+"/mcrmbConfig.yml", Config.YAML);
         website = cfg.getString("website", "");
         sid = cfg.getString("sid", "");

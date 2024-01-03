@@ -9,8 +9,8 @@ import java.io.File;
 import java.util.LinkedHashMap;
 
 public class PlayerBuyData {
-    static public LinkedHashMap<String, Config> PlayerBuyMap;
-    static public void init() {
+    public static LinkedHashMap<String, Config> PlayerBuyMap;
+    public static void init() {
         PlayerBuyMap = new LinkedHashMap<>();
         File[] files = new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData").listFiles();
 
@@ -21,7 +21,7 @@ public class PlayerBuyData {
         }
     }
 
-    static public ConfigSection setPlayerData(String playerName, String limitUid, int buyCount, long buyTime) {
+    public static ConfigSection setPlayerData(String playerName, String limitUid, int buyCount, long buyTime) {
         Config config = PlayerBuyMap.getOrDefault(playerName, new Config(
                 new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
                 Config.YAML,
@@ -38,7 +38,7 @@ public class PlayerBuyData {
         return config.getSection(limitUid);
     }
 
-    static public ConfigSection getPlayerData(String playerName, String limitUid) {
+    public static ConfigSection getPlayerData(String playerName, String limitUid) {
         Config config = PlayerBuyMap.getOrDefault(playerName, new Config(
                 new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
                 Config.YAML,
@@ -57,7 +57,7 @@ public class PlayerBuyData {
         }
     }
 
-    static public ConfigSection addPlayerData(String playerName, String limitUid, int count) {
+    public static ConfigSection addPlayerData(String playerName, String limitUid, int count) {
         ConfigSection cfg = getPlayerData(playerName, limitUid);
         cfg.set("buyCount", cfg.getInt("buyCount", 0) + count);
         if (cfg.getLong("buyTime", 0) > 0) {

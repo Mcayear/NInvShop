@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ShopPagesData {
-    static public LinkedHashMap<String, ShopPagesData> ShopPagesMap;
+    public static LinkedHashMap<String, ShopPagesData> ShopPagesMap;
 
-    static public void init() {
+    public static void init() {
         ShopPagesMap = new LinkedHashMap<>();
         File[] files = new File(NInvShop.INSTANCE.getDataFolder() + "/ShopPages").listFiles();
 
