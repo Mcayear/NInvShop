@@ -5,6 +5,7 @@ import cn.vusv.ninvshop.NInvShop;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,21 @@ public class ShopPagesData {
 
     public static void init() {
         ShopPagesMap = new LinkedHashMap<>();
-        File[] files = new File(NInvShop.INSTANCE.getDataFolder() + "/ShopPages").listFiles();
+        File[] files = new File(NInvShop.getInstance().getDataFolder() + "/ShopPages").listFiles();
 
+        if (files == null) {
+            NInvShop.getInstance().getLogger().error("ShopPages 文件夹不存在。");
+            return;
+        }
         for (File file : files) {
             if (!file.isFile()) continue;
             String fileName = file.getName().replace(".yml", "");
-            ShopPagesMap.put(fileName, new ShopPagesData(fileName, new Config(file, Config.YAML)));
+            try {
+                ShopPagesMap.put(fileName, new ShopPagesData(fileName, new Config(file, Config.YAML)));
+            } catch (java.lang.ClassCastException err) {
+                NInvShop.getInstance().getLogger().info("加载失败 "+fileName);
+                throw err;
+            }
         }
     }
 
@@ -42,7 +52,6 @@ public class ShopPagesData {
                 .stream()
                 .map(item -> new ItemData((Map<String, Object>) item))
                 .collect(Collectors.toList());
-
     }
 
     public String getShopName() {
@@ -69,7 +78,7 @@ public class ShopPagesData {
         private int price;
         private int bulkBuy;
         private String showNeed;
-        private String need;
+        private List<String> need;
         private List<String> execcmd;
         private boolean onlycmd;
         private BuyLimits buyLimits;
@@ -79,7 +88,7 @@ public class ShopPagesData {
             this.price = (int) data.getOrDefault("price", 0);
             this.bulkBuy = (int) data.getOrDefault("bulk_buy", 1);
             this.showNeed = (String) data.getOrDefault("showNeed", "");
-            this.need = (String) data.getOrDefault("need", "");
+            this.need = (List<String>) data.getOrDefault("need", List.of());
             this.execcmd = (List<String>) data.getOrDefault("execcmd", List.of());
             this.onlycmd = (boolean) data.getOrDefault("onlycmd", false);
             if (data.containsKey("buyLimits")) {
@@ -103,7 +112,7 @@ public class ShopPagesData {
             return showNeed;
         }
 
-        public String getNeed() {
+        public List<String> getNeed() {
             return need;
         }
 

@@ -10,7 +10,7 @@ public class McrmbConfig {
     public static String sid = "";
     public static String key = "";
     public static void init() {
-        Config cfg = new Config(NInvShop.INSTANCE.getDataFolder()+"/mcrmbConfig.yml", Config.YAML);
+        Config cfg = new Config(NInvShop.getInstance().getDataFolder()+"/mcrmbConfig.yml", Config.YAML);
         website = cfg.getString("website", "");
         sid = cfg.getString("sid", "");
         key = cfg.getString("key", "");

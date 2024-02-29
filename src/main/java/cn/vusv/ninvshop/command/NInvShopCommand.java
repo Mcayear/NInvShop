@@ -1,16 +1,13 @@
 package cn.vusv.ninvshop.command;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.command.tree.ParamList;
-import cn.nukkit.command.tree.node.BooleanNode;
-import cn.nukkit.command.tree.node.PlayersNode;
-import cn.nukkit.command.utils.CommandLogger;
+import cn.nukkit.lang.LangCode;
+import cn.nukkit.lang.PluginI18n;
 import cn.nukkit.utils.TextFormat;
 import cn.vusv.ninvshop.NInvShop;
 import cn.vusv.ninvshop.config.PlayerBuyData;
@@ -18,22 +15,18 @@ import cn.vusv.ninvshop.config.ShopPagesData;
 import cn.vusv.ninvshop.shoppage.ShopPageSend;
 import cn.vusv.ninvshop.window.sendShopListWin;
 
-import java.util.List;
-import java.util.Map;
+public class NInvShopCommand extends Command {
+    protected NInvShop api;
+    protected PluginI18n i18n;
 
-import static cn.vusv.ninvshop.NInvShop.I18N;
-
-
-public class NInvShopCommand extends PluginCommand<NInvShop> {
-
-    public NInvShopCommand() {
+    public NInvShopCommand(String name) {
         /*
         1.the name of the command must be lowercase
         2.Here the description is set in with the key in the language file,Look at en_US.lang or zh_CN.lang.
         This can send different command description to players of different language.
         You must extends PluginCommand to have this feature.
         */
-        super("ninvshop", "exampleplugin.examplecommand.description", NInvShop.INSTANCE);
+        super(name, "ninvshop.shopcommand.description");
 
         //Set the alias for this command
         this.setAliases(new String[]{"shop"});
@@ -53,112 +46,108 @@ public class NInvShopCommand extends PluginCommand<NInvShop> {
          * 3.Optional arguments must be used at the end of the subcommand or consecutively.
          */
         this.getCommandParameters().put("reload-config", new CommandParameter[]{
-                CommandParameter.newEnum("reload", false, new CommandEnum("reloadAction", "reload"))
+                CommandParameter.newEnum("reload", false, new String[]{"reload"})
         });
         this.getCommandParameters().put("test-shop", new CommandParameter[]{
-                CommandParameter.newEnum("test", false, new CommandEnum("testAction", "test")),
+                CommandParameter.newEnum("test", false, new String[]{"test"}),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING)
         });
         this.getCommandParameters().put("open-shop", new CommandParameter[]{
-                CommandParameter.newEnum("open", false, new CommandEnum("openAction", "open")),
+                CommandParameter.newEnum("open", false, new String[]{"open"}),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING),
-                CommandParameter.newType("player", true, CommandParamType.TARGET, new PlayersNode())
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
         this.getCommandParameters().put("list-shop", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new CommandEnum("adminOp", "x")),
-                CommandParameter.newEnum("action", false, new CommandEnum("listShop", "list")),
+                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("action", false, new String[]{"list"}),
         });
         this.getCommandParameters().put("craft-shop", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new CommandEnum("adminOp", "x")),
-                CommandParameter.newEnum("action", false, new CommandEnum("craftShop", "craft")),
+                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("action", false, new String[]{"craft"}),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING),
                 CommandParameter.newType("row", true, CommandParamType.STRING),
                 CommandParameter.newType("icon", true, CommandParamType.STRING)
         });
         this.getCommandParameters().put("add-slot", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new CommandEnum("adminOp", "x")),
-                CommandParameter.newEnum("action", false, new CommandEnum("addSlot", "add")),
+                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("action", false, new String[]{"add"}),
                 CommandParameter.newType("prices", false, CommandParamType.INT),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING),
                 CommandParameter.newType("commands", true, CommandParamType.STRING),
-                CommandParameter.newEnum("isOnlyCommands", true, CommandEnum.ENUM_BOOLEAN, new BooleanNode()),
+                CommandParameter.newEnum("isOnlyCommands", true, CommandEnum.ENUM_BOOLEAN),
         });
         this.getCommandParameters().put("change-slot", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new CommandEnum("adminOp", "x")),
-                CommandParameter.newEnum("action", false, new CommandEnum("changeSlot", "remove", "set")),
+                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("action", false, new String[]{"remove", "set"}),
                 CommandParameter.newType("index", false, CommandParamType.INT),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING)
         });
-        /*
-         * You'll find two `execute()` methods,
-         * where `boolean execute()` is the old NK method,
-         * and if you want to use the new `int execute()`,
-         * you must add `enableParamTree` at the end of the constructor.
-         *
-         * Note that you can only choose one of these two execute methods
-         */
-        this.enableParamTree();
+        api = NInvShop.getInstance();
+        i18n = NInvShop.getI18n();
     }
 
-    /**
-     * This method is executed only if the command syntax is correct, which means you don't need to verify the parameters yourself.
-     * In addition, before executing the command, will check whether the executor has the permission for the command.
-     * If these conditions are not met, an error message is automatically displayed.
-     *
-     * @param sender       The sender of the command
-     * @param commandLabel Command label. For example, if `/test 123` is used, the value is `test`
-     * @param result       The parsed matching subcommand pattern
-     * @param log          The command output tool, which is used to output info, can be controlled by the world's sendCommandFeedback rule
-     */
     @Override
-    public int execute(CommandSender sender, String commandLabel, Map.Entry<String, ParamList> result, CommandLogger log) {
-        var list = result.getValue();
-        switch (result.getKey()) {
-            case "reload-config" -> {
+    public boolean execute(CommandSender sender, String label, String[] args) {
+        LangCode langCode = sender.isPlayer() ? ((Player)sender).getLanguageCode() : LangCode.zh_CN;
+
+        if (args.length < 1) {
+            sender.sendMessage("缺少参数");
+            return false;
+        }
+        switch (args[0]) {
+            case "reload" -> {
                 PlayerBuyData.init();
                 ShopPagesData.init();
-                log.addSuccess(TextFormat.GREEN + I18N.tr(Server.getInstance().getLanguageCode(), "ninvshop.reload_success")).output();
-                return 1;
+                sender.sendMessage(TextFormat.GREEN + i18n.tr(langCode, "ninvshop.reload_success"));
+                return true;
             }
-            case "test-shop" -> {
-                String pageName = list.getResult(1);
+            case "test" -> {
+                if (args.length < 2) {
+                    sender.sendMessage("缺少参数");
+                    return false;
+                }
+                String pageName = args[1];
                 if (!ShopPagesData.ShopPagesMap.containsKey(pageName)) {
-                    log.addError(TextFormat.RED + I18N.tr(Server.getInstance().getLanguageCode(), "ninvshop.not_found_page", pageName)).output();
-                    return 0;
+                    sender.sendMessage(TextFormat.RED + i18n.tr(langCode, "ninvshop.not_found_page", pageName));
+                    return false;
                 }
                 ShopPagesData shopPage = ShopPagesData.ShopPagesMap.get(pageName);
                 new ShopPageSend(pageName).sendPageToPlayer(shopPage, (Player) sender);
-                return 1;
+                return true;
             }
-            case "open-shop" -> {
-                String pageName = list.getResult(1);
+            case "open" -> {
+                if (args.length < 2) {
+                    sender.sendMessage("缺少参数");
+                    return false;
+                }
+                String pageName = args[1];
                 if (!ShopPagesData.ShopPagesMap.containsKey(pageName)) {
-                    log.addError(TextFormat.RED + I18N.tr(Server.getInstance().getLanguageCode(), "ninvshop.not_found_page", pageName)).output();
-                    return 0;
+                    sender.sendMessage(TextFormat.RED + i18n.tr(langCode, "ninvshop.not_found_page", pageName));
+                    return false;
                 }
                 ShopPagesData shopPage = ShopPagesData.ShopPagesMap.get(pageName);
-                if (list.hasResult(2)) {
-                    List<Player> players = list.getResult(2);
-                    if (players.isEmpty()) {
-                        log.addNoTargetMatch().output();
-                        return 0;
+                if (args.length > 2) {
+                    Player player = api.getServer().getPlayer(args[2]);
+                    if (!player.isValid()) {
+                        sender.sendMessage("没有匹配的目标");
+                        return false;
                     }
-                    new ShopPageSend(pageName).sendPageToPlayer(shopPage, players.get(0));
+                    new ShopPageSend(pageName).sendPageToPlayer(shopPage, player);
                 } else {
                     new ShopPageSend(pageName).sendPageToPlayer(shopPage, (Player) sender);
                 }
-                return 1;
+                return true;
             }
-            case "list-shop" -> {
+            case "list" -> {
                 if (!sender.isPlayer() || !sender.isOp()) {
-                    log.addError("仅支持玩家执行").output();
-                    return 0;
+                    sender.sendMessage(i18n.tr(langCode, "ninvshop.shopcommand.onlyplayer"));
+                    return false;
                 }
                 new sendShopListWin((Player) sender);
             }
         }
         //A return of 0 means failure, and a return of 1 means success.
         //This value is applied to the comparator next to the commandblock.
-        return 0;
+        return false;
     }
 }

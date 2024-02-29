@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.vusv.ninvshop.NInvShop.I18N;
 
 public class ExamineNeed {
     public static boolean examineNeed(String[] needArray, Player player) {
@@ -29,9 +28,9 @@ public class ExamineNeed {
                 needRMB += Integer.parseInt(type[1]);
                 continue;
             }
-            Item item = Utils.parseItemString(needArray[i]);
+            Item item = Utils.parseItemString(needArray[i], player.getLanguageCode());
             if (item == null) {
-                NInvShop.INSTANCE.getLogger().warning("配置文件中需求有误: " + String.join("||", needArray));
+                NInvShop.getInstance().getLogger().warning("配置文件中需求有误: " + String.join("||", needArray));
                 return false;
             }
             if (player.getInventory().contains(item)) {
@@ -41,13 +40,13 @@ public class ExamineNeed {
             }
         }
         if (itemNeedList.size() > 0) {
-            player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.need_failed_msg", String.join("、", itemNeedList)));
+            player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.need_failed_msg", String.join("、", itemNeedList)));
             return false;
         }
         Econ EconAPI = new Econ(player);
         if (needMoney > 0) {
             if (EconAPI.getMoney() < needMoney) {
-                player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.need_failed_msg", "Money *" + (needMoney - EconAPI.getMoney())));
+                player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.need_failed_msg", "Money *" + (needMoney - EconAPI.getMoney())));
                 return false;
             }
             EconAPI.reduceMoney(needMoney);

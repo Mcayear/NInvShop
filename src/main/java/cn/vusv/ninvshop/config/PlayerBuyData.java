@@ -12,7 +12,7 @@ public class PlayerBuyData {
     public static LinkedHashMap<String, Config> PlayerBuyMap;
     public static void init() {
         PlayerBuyMap = new LinkedHashMap<>();
-        File[] files = new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData").listFiles();
+        File[] files = new File(NInvShop.getInstance().getDataFolder() + "/PlayerBuyData").listFiles();
 
         for (File file : files) {
             if (!file.isFile()) continue;
@@ -23,7 +23,7 @@ public class PlayerBuyData {
 
     public static ConfigSection setPlayerData(String playerName, String limitUid, int buyCount, long buyTime) {
         Config config = PlayerBuyMap.getOrDefault(playerName, new Config(
-                new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
+                new File(NInvShop.getInstance().getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
                 Config.YAML,
                 //Default values (not necessary)
                 new ConfigSection()
@@ -40,7 +40,7 @@ public class PlayerBuyData {
 
     public static ConfigSection getPlayerData(String playerName, String limitUid) {
         Config config = PlayerBuyMap.getOrDefault(playerName, new Config(
-                new File(NInvShop.INSTANCE.getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
+                new File(NInvShop.getInstance().getDataFolder() + "/PlayerBuyData", playerName + ".yml"),
                 Config.YAML,
                 //Default values (not necessary)
                 new ConfigSection()

@@ -7,11 +7,11 @@ api: ["1.0.0"]
 load: POSTWORLD
 author: Mcayear
 # Authors and author will be added together in one list.
-authors: ["Example", "Another"]
+authors: []
 description: 箱子商店
 website: https://github.com/PowerNukkitX/ExamplePlugin-Maven
 # These dependencies are required for the plugin to start.
-#depend: ["OtherPlugin", "ThisPlugin"]
+depend: ["FakeInventories"]
 # These dependencies are not required.
 softdepend: ["MagicItem", "RcRPG", "EconomyAPI"]
 # Log prefix in console

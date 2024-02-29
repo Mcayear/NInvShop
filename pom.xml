@@ -21,43 +21,65 @@
             <id>jitpack.io</id>
             <url>https://www.jitpack.io</url>
         </repository>
+        <repository>
+            <id>repo-lanink-cn</id>
+            <url>https://repo.lanink.cn/repository/maven-public/</url>
+        </repository>
     </repositories>
          
     <dependencies>
         <dependency>
-            <groupId>cn.powernukkitx</groupId>
-            <artifactId>powernukkitx</artifactId>
-            <version>1.20.40-r1</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.nukkit</groupId>
+            <artifactId>Nukkit</artifactId>
+            <version>MOT-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>me.onebone</groupId>
             <artifactId>economyapi</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0.2</version>
+            <scope>system</scope>
+            <systemPath>D:/IdeaProjects/1pnx-plugin-libs/EconomyAPI-2.0.2.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>cn.ankele.plugin.MagicItem</groupId>
             <artifactId>MagicItem</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
             <scope>system</scope>
-            <systemPath>D:/IdeaProjects/1pnx-plugin-libs/MagicItem-1.0-SNAPSHOT.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/MagicItem-1.1.0.jar</systemPath>
         </dependency>
 
         <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>fakeinventories</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <groupId>me.iwareq.fakeinventories.FakeInventories</groupId>
+            <artifactId>FakeInventories</artifactId>
+            <version>1.1.8-MOT</version>
             <scope>system</scope>
-            <systemPath>D:/IdeaProjects/1pnx-plugin-libs/fakeinventories.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/FakeInventories-1.1.8-MOT.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>RcRPG.Main</groupId>
             <artifactId>RcRPG</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.4-MOT</version>
             <scope>system</scope>
-            <systemPath>D:/IdeaProjects/1pnx-plugin-libs/RcRPG-1.0.2-SNAPSHOT.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/RcRPG-1.0.4-MOT.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>RcTaskBook.Main</groupId>
+            <artifactId>RcTaskBook</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/RcTaskBook-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 

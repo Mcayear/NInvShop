@@ -9,7 +9,12 @@ ninvshop.item.purchase_failed=[{%0}] §c需求不满足
 ninvshop.item.purchase_success=[{%0}] §a购买成功，欢迎下次光临
 ninvshop.need_failed_msg=需满足：{%0}
 ninvshop.reload_success=配置文件重载成功！
-ninvshop.shop_page_title=商店 - {%0}
+ninvshop.shop_page_title={%0}
+ninvshop.shop_sold=§r§c§l已售馨
+ninvshop.shop_need=§r§f需求: §f
+ninvshop.shop_price=§r§f价格: §f
+ninvshop.shop_remaining_quantity=§r§f剩余数量: §f
 ninvshop.not_found_page=页面 {%0} 不存在！
-exampleplugin.helloworld=你好 {%0}!
-exampleplugin.examplecommand.description=这是一个测试命令。
+
+ninvshop.shopcommand.description=箱子商店命令
+ninvshop.shopcommand.onlyplayer=仅允许玩家执行

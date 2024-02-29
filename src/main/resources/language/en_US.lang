@@ -10,6 +10,11 @@ ninvshop.item.purchase_success=[{%0}] §aPurchase successful, welcome to visit n
 ninvshop.need_failed_msg=Required: {%0}
 ninvshop.reload_success=Configuration file reloaded successfully!
 ninvshop.shop_page_title=Shop - {%0}
+ninvshop.shop_sold=§r§c§lSold
+ninvshop.shop_need=§r§fNeed: §f
+ninvshop.shop_price=§r§fPrice: §f
+ninvshop.shop_remaining_quantity=§r§fRemaining Quantity: §f
 ninvshop.not_found_page=Not found {%0}！
-exampleplugin.helloworld=Hello {%0}!
-exampleplugin.examplecommand.description=This is Test command.
+
+ninvshop.shopcommand.description=Box Shop Command.
+ninvshop.shopcommand.onlyplayer=Only players are allowed to execute.

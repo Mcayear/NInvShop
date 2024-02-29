@@ -10,24 +10,27 @@ import cn.vusv.ninvshop.command.NInvShopCommand;
 import cn.vusv.ninvshop.config.McrmbConfig;
 import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
+import lombok.Getter;
 
 import java.io.File;
 
 public class NInvShop extends PluginBase {
-    public static NInvShop INSTANCE;
-    public static PluginI18n I18N;
+    @Getter
+    public static NInvShop instance;
+    @Getter
+    public static PluginI18n i18n;
 
     @Override
     public void onLoad() {
         //save Plugin Instance
-        INSTANCE = this;
+        instance = this;
         //register the plugin i18n
-        I18N = PluginI18nManager.register(this);
+        i18n = PluginI18nManager.register(this);
 
         Server.getInstance().getPluginManager().addPermission(new Permission("plugin.ninvshop", "NInvShop 命令权限", "true"));
         Server.getInstance().getPluginManager().addPermission(new Permission("plugin.ninvshop.admin", "NInvShop 管理员命令权限", "op"));
         //register the command of plugin
-        this.getServer().getCommandMap().register("NInvShop", new NInvShopCommand());
+        this.getServer().getCommandMap().register("NInvShop", new NInvShopCommand("ninvshop"));
 
         this.getLogger().info(TextFormat.WHITE + "I've been loaded!");
     }

@@ -1,6 +1,5 @@
 package cn.vusv.ninvshop.window;
 
-import RcRPG.Main;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -22,7 +21,6 @@ import cn.vusv.ninvshop.shoppage.ShopPageSend;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.vusv.ninvshop.NInvShop.I18N;
 import static cn.vusv.ninvshop.Utils.compLimBuyCount;
 import static cn.vusv.ninvshop.Utils.parseItemString;
 
@@ -47,31 +45,33 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
                 return;
             }
             FormResponseCustom response = form.getResponse();
-            int slider = (int) response.getSliderResponse(1);
+            Item item = parseItemString(itemData.getShowitem(), player.getLanguageCode());
+            int select = (int) response.getSliderResponse(1);
+            int slider = select * Math.max(item.getCount(), 1);
             if (slider < 1) {
                 new ShopPageSend(shopPage.getShopName()).sendPageToPlayer(shopPage, player);
                 return;
             }
-            player.sendMessage("购买数量为: " + slider);
-            slider = 1;// TODO: 实现 %total% 变量
+            player.sendActionBar("购买数量为: " + slider);
             if (!itemData.getNeed().isEmpty()) {
-                if (!ExamineNeed.examineNeed(itemData.getNeed().split("\\|\\|"), player)) {
-                    player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.item.purchase_failed", shopPage.getShopName()));
+                if (!ExamineNeed.examineNeed(itemData.getNeed().toArray(new String[0]), player)) {
+                    player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_failed", shopPage.getShopName()));
                     return;
                 }
                 // 需求满足
-                player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
+                player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
                 if (itemData.getBuyLimits() != null) {
                     PlayerBuyData.addPlayerData(player.getName(), itemData.getBuyLimits().getUid(), slider);
                 }
             } else {// 不走 need 通道
                 Econ pEcon = new Econ(player);
-                if (itemData.getPrice() > 0 && itemData.getPrice() > pEcon.getMoney()) {
-                    player.sendMessage(I18N.tr(player.getLanguageCode(), "ninvshop.item.not_enough_money", String.valueOf(itemData.getPrice() - pEcon.getMoney())));
+                int needMoney = itemData.getPrice()*select;
+                if (itemData.getPrice() > 0 && needMoney > pEcon.getMoney()) {
+                    player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.not_enough_money", String.valueOf(needMoney - pEcon.getMoney())));
                 }
+                pEcon.reduceMoney(needMoney);
             }
             if (!itemData.isOnlycmd()) {
-                Item item = parseItemString(itemData.getShowitem());
                 if (item.isNull()) {
                     player.sendMessage("§c物品 "+itemData.getShowitem()+" 不存在");
                 }
@@ -86,7 +86,7 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
                 } else {
                     execer = Server.getInstance().getConsoleSender();
                 }
-                Server.getInstance().executeCommand(execer, cmd);
+                Server.getInstance().dispatchCommand(execer, cmd);
             }
         }));
         player.showFormWindow(form);
