@@ -49,16 +49,24 @@ public class ShopPageSend {
             if (item == null) {
                 item = Item.fromString("minecraft:stone");
             }
+            if (itemData.getIteminfo() != null) {
+                item.setCustomName(itemData.getIteminfo().getName());
+                item.setLore(itemData.getIteminfo().getLore());
+            }
+
             List<String> loreList = new ArrayList<>();
             for (String str : item.getLore()) {
                 loreList.add(str);
             }
 
-            loreList.add("");
             if (itemData.getPrice() == 0) {
-                loreList.add(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.shop_need"));
-                loreList.add(itemData.getShowNeed());
+                if (!itemData.getShowNeed().isEmpty()) {
+                    loreList.add("");
+                    loreList.add(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.shop_need"));
+                    loreList.add(itemData.getShowNeed());
+                }
             } else {
+                loreList.add("");
                 loreList.add(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.shop_price") + itemData.getPrice());
             }
 
@@ -97,23 +105,41 @@ public class ShopPageSend {
             event.setCancelled(true);
             if (item.isNull()) return;
 
+            int finalSlot = slot;
+            if (finalSlot >= 0 && finalSlot < itemList.size()) {
+
+            } else {
+                return;// 跳过无效的物品数据
+            }
+            ShopPagesData.ItemData itemData = itemList.get(finalSlot);
+
+            if (itemData.getBuyLimits() != null) {
+                int limBuyCount = compLimBuyCount(player, itemData);
+                if (limBuyCount == 0) {
+                    return;
+                }
+            }
+
             if (!isClosed[0]) {
                 inv.close(player);
                 isClosed[0] = true;
             }
-            int finalSlot = slot;
-            Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
-                @Override
-                public void onRun(int i) {
-                    if (finalSlot >= 0 && finalSlot < itemList.size()) {
-                        new sendBuyWin(player, shopPage, itemList.get(finalSlot), item);
-                    } else {
-                        // 处理索引超出范围的情况，可以抛出异常或者记录错误信息
-                        // 例如：throw new IndexOutOfBoundsException("Invalid slot index: " + slot);
-                        // 或者：logger.error("Invalid slot index: {}", slot);
+
+            if (itemData.isDirect()) {
+                Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                    @Override
+                    public void onRun(int i) {
+                        new sendBuyWin(player, shopPage, itemData, item).handleBuy(player, 1, 1, item);
                     }
-                }
-            }, 10);
+                }, 17);
+            } else {
+                Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                    @Override
+                    public void onRun(int i) {
+                        new sendBuyWin(player, shopPage, itemData, item).toPlayer(player);
+                    }
+                }, 10);
+            }
         });
         player.addWindow(inv);
     }

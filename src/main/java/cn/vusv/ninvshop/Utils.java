@@ -144,14 +144,25 @@ public class Utils {
         }
     }
 
+    /**
+     * 返回还可以购买的数量
+     * @param player
+     * @param itemData
+     * @return
+     */
     public static int compLimBuyCount(Player player, ShopPagesData.ItemData itemData) {
         int limBuyCount = 0;
         ConfigSection pBuyData = PlayerBuyData.getPlayerData(player.getName(), itemData.getBuyLimits().getUid());
         int limHour = defaultVaule(itemData.getBuyLimits().getRefreshTimeDay()) + defaultVaule(itemData.getBuyLimits().getRefreshTimeDay()) * 24;
+
         if (pBuyData.exists("buyCount")) {// 判断是否有玩家购买数据
             int canBuyCount = itemData.getBuyLimits().getMaxNum() - pBuyData.getInt("buyCount");
             if (canBuyCount < 1) {// 判断能否继续购买物品
-                if ((int) ((getNowTime() - pBuyData.getLong("buyTime")) / 36e5) > limHour) {// 判断时间
+                if (itemData.getBuyLimits().getRefreshTimeDay() == 0 && itemData.getBuyLimits().getRefreshTimeHour() == 0) {
+                    return 0;
+                }
+                int compTime = (int) ((getNowTime() - pBuyData.getLong("buyTime")) / 36e5);
+                if (compTime > limHour) {// 判断时间
                     PlayerBuyData.setPlayerData(player.getName(), itemData.getBuyLimits().getUid(), 0, 0);
                     limBuyCount = itemData.getBuyLimits().getMaxNum();
                 } else {

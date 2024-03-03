@@ -3,9 +3,11 @@ package cn.vusv.ninvshop;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
+import cn.vusv.ninvshop.adapter.CodeException;
 import cn.vusv.ninvshop.adapter.Econ;
 import cn.vusv.ninvshop.adapter.PointCoupon;
 import cn.vusv.ninvshop.config.McrmbConfig;
+import net.player.api.Point;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +17,14 @@ import java.util.Map;
 
 public class ExamineNeed {
     public static boolean examineNeed(String[] needArray, Player player) {
+        return examineNeed(needArray, player, "NInvShop 购买商品");
+    }
+    public static boolean examineNeed(String[] needArray, Player player, String reason) {
         List<String> itemNeedList = new ArrayList<>();
         List<Item> itemList = new ArrayList<>();
         int needMoney = 0;
         int needRMB = 0;
+        int needPoint = 0;
         for (int i = 0; i < needArray.length; i++) {
             String[] type = needArray[i].split("@");
             if (type[0].equals("money")) {
@@ -26,6 +32,9 @@ public class ExamineNeed {
                 continue;
             } else if (type[0].equals("rmb")) {
                 needRMB += Integer.parseInt(type[1]);
+                continue;
+            } else if (type[0].equals("point")) {
+                needPoint += Integer.parseInt(type[1]);
                 continue;
             }
             Item item = Utils.parseItemString(needArray[i], player.getLanguageCode());
@@ -39,7 +48,7 @@ public class ExamineNeed {
                 itemNeedList.add((item.getCustomName() != null ? item.getCustomName() : item.getName()) + " §r*" + item.getCount());
             }
         }
-        if (itemNeedList.size() > 0) {
+        if (!itemNeedList.isEmpty()) {
             player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.need_failed_msg", String.join("、", itemNeedList)));
             return false;
         }
@@ -51,19 +60,22 @@ public class ExamineNeed {
             }
             EconAPI.reduceMoney(needMoney);
         }
-        if (needRMB > 0) {
-            Map<String, String> params = new HashMap<>();
-            params.put("wname", player.getName().replace(" ", "_"));
-            params.put("money", String.valueOf(needRMB));
-            params.put("use", "VIP-Shop");
-            Map<String, Object> n3 = PointCoupon.sendGet("Pay", params);
-
-            int code = Integer.parseInt((String) n3.get("code"));
-            if (code == 0) {
+        if (needPoint > 0) {
+            if (!Point.reducePoint(player, needPoint)) {
+                player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.cannot.point", McrmbConfig.website).replace("{n}", "\n"));
                 return false;
             }
-            if (code != 101) {
-                player.sendMessage("§c点券余额不足，请充值。\n唯一充值官网：" + McrmbConfig.website);
+        } else if (needRMB > 0) {
+            boolean isPay;
+            try {
+                isPay = PointCoupon.toPay(player.getName().replace(" ", "_"), needRMB, reason);
+            } catch (CodeException e) {
+                player.sendMessage("出现了未知错误："+e);
+                return false;
+            }
+
+            if (!isPay) {
+                player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.cannot.point", McrmbConfig.website).replace("{n}", "\n"));
                 return false;
             }
         }

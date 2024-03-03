@@ -18,3 +18,5 @@ ninvshop.not_found_page=页面 {%0} 不存在！
 
 ninvshop.shopcommand.description=箱子商店命令
 ninvshop.shopcommand.onlyplayer=仅允许玩家执行
+
+ninvshop.cannot.point=§c点券余额不足，请充值。{n}唯一赞助地址： {%0}

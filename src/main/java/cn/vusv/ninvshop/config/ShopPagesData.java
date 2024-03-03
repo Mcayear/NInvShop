@@ -3,6 +3,7 @@ package cn.vusv.ninvshop.config;
 import cn.nukkit.utils.Config;
 import cn.vusv.ninvshop.NInvShop;
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class ShopPagesData {
 
     public static class ItemData {
         private String showitem;
+        private ItemInfo iteminfo;
         private int price;
         private int bulkBuy;
         private String showNeed;
@@ -82,9 +84,13 @@ public class ShopPagesData {
         private List<String> execcmd;
         private boolean onlycmd;
         private BuyLimits buyLimits;
+        private boolean direct = false;// 直接购买1个
 
         public ItemData(Map<String, Object> data) {
             this.showitem = (String) data.getOrDefault("showitem", "");
+            if (data.containsKey("iteminfo")) {
+                this.iteminfo = new ItemInfo((Map<String, Object>) data.getOrDefault("iteminfo", Map.of()));
+            }
             this.price = (int) data.getOrDefault("price", 0);
             this.bulkBuy = (int) data.getOrDefault("bulk_buy", 1);
             this.showNeed = (String) data.getOrDefault("showNeed", "");
@@ -94,10 +100,15 @@ public class ShopPagesData {
             if (data.containsKey("buyLimits")) {
                 this.buyLimits = new BuyLimits((Map<String, Object>) data.getOrDefault("buyLimits", Map.of()));
             }
+            this.direct = (boolean) data.getOrDefault("direct", false);
         }
 
         public String getShowitem() {
             return showitem;
+        }
+
+        public ItemInfo getIteminfo() {
+            return iteminfo;
         }
 
         public int getPrice() {
@@ -126,6 +137,21 @@ public class ShopPagesData {
 
         public BuyLimits getBuyLimits() {
             return buyLimits;
+        }
+
+        public boolean isDirect() {
+            return direct;
+        }
+    }
+
+    public static class ItemInfo {
+        @Getter
+        private String name;
+        @Getter
+        private String lore;
+        public ItemInfo(Map<String, Object> itemInfo) {
+            this.name = (String) itemInfo.getOrDefault("name", "");
+            this.lore = (String) itemInfo.getOrDefault("lore", "");
         }
     }
 

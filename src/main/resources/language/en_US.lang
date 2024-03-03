@@ -18,3 +18,5 @@ ninvshop.not_found_page=Not found {%0}！
 
 ninvshop.shopcommand.description=Box Shop Command.
 ninvshop.shopcommand.onlyplayer=Only players are allowed to execute.
+
+ninvshop.cannot.point=§cInsufficient coupon balance, please recharge.{n}The only recharge official website: {%0}
