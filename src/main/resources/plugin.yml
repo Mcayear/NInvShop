@@ -13,6 +13,6 @@ website: https://github.com/PowerNukkitX/ExamplePlugin-Maven
 # These dependencies are required for the plugin to start.
 depend: ["FakeInventories"]
 # These dependencies are not required.
-softdepend: ["MagicItem", "RcRPG", "EconomyAPI"]
+softdepend: ["MagicItem", "RcRPG", "EconomyAPI", "RcTaskBook", "PlayerPoints"]
 # Log prefix in console
 prefix: "NInvShop"

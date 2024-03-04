@@ -9,19 +9,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -60,6 +55,20 @@ public class PointCoupon {
         return false;
     }
 
+    /**
+     * 获取玩家充值的rmb
+     */
+    public static int checkMoney(String playerName) throws CodeException {
+        ConfigSection section = send("CheckMoney", md5Value(playerName));
+        if (Integer.parseInt(section.getString("code")) == 101) {
+            Map map = section.getMapList("data").get(0);
+            return Integer.parseInt(map.get("money").toString());
+        } else if (Integer.parseInt(section.getString("code")) == 102) {
+            return 0;
+        } else {
+            throw new CodeException(Integer.parseInt(section.getString("code")), section.getString("msg"));
+        }
+    }
 
     private String toTime(String time) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

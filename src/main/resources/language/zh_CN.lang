@@ -20,3 +20,4 @@ ninvshop.shopcommand.description=箱子商店命令
 ninvshop.shopcommand.onlyplayer=仅允许玩家执行
 
 ninvshop.cannot.point=§c点券余额不足，请充值。{n}唯一赞助地址： {%0}
+ninvshop.checkmcrmb=§f您当前 MCRMB 余额为： §e{%0}

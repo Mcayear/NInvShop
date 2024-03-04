@@ -73,7 +73,12 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
      */
     public boolean handleBuy(Player player, int count, int select, Item item) {
         if (!itemData.getNeed().isEmpty()) {
-            String reason = this.itemData.getBuyLimits().getUid().isEmpty() ? "购买"+item.getCustomName()+" *"+count : this.itemData.getBuyLimits().getUid();
+            String reason = "购买"+item.getCustomName()+" *"+count;
+            if (this.itemData.getBuyLimits() != null) {
+                if (!this.itemData.getBuyLimits().getUid().isEmpty()) {
+                    reason = this.itemData.getBuyLimits().getUid();
+                }
+            }
             if (!ExamineNeed.examineNeed(itemData.getNeed().toArray(new String[0]), player, reason)) {
                 if (!itemData.isDirect()) player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_failed", shopPage.getShopName()));
                 return false;

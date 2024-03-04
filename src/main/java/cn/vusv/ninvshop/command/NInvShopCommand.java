@@ -10,10 +10,13 @@ import cn.nukkit.lang.LangCode;
 import cn.nukkit.lang.PluginI18n;
 import cn.nukkit.utils.TextFormat;
 import cn.vusv.ninvshop.NInvShop;
+import cn.vusv.ninvshop.adapter.CodeException;
 import cn.vusv.ninvshop.config.PlayerBuyData;
 import cn.vusv.ninvshop.config.ShopPagesData;
 import cn.vusv.ninvshop.shoppage.ShopPageSend;
 import cn.vusv.ninvshop.window.sendShopListWin;
+
+import static cn.vusv.ninvshop.adapter.PointCoupon.checkMoney;
 
 public class NInvShopCommand extends Command {
     protected NInvShop api;
@@ -47,6 +50,10 @@ public class NInvShopCommand extends Command {
          */
         this.getCommandParameters().put("reload-config", new CommandParameter[]{
                 CommandParameter.newEnum("reload", false, new String[]{"reload"})
+        });
+        this.getCommandParameters().put("check-mcrmb", new CommandParameter[]{
+                CommandParameter.newEnum("checkmcrmb", false, new String[]{"checkmcrmb"}),
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
         this.getCommandParameters().put("test-shop", new CommandParameter[]{
                 CommandParameter.newEnum("test", false, new String[]{"test"}),
@@ -88,7 +95,7 @@ public class NInvShopCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        LangCode langCode = sender.isPlayer() ? ((Player)sender).getLanguageCode() : LangCode.zh_CN;
+        LangCode langCode = sender.isPlayer() ? ((Player) sender).getLanguageCode() : LangCode.zh_CN;
 
         if (args.length < 1) {
             sender.sendMessage("缺少参数");
@@ -99,6 +106,20 @@ public class NInvShopCommand extends Command {
                 PlayerBuyData.init();
                 ShopPagesData.init();
                 sender.sendMessage(TextFormat.GREEN + i18n.tr(langCode, "ninvshop.reload_success"));
+                return true;
+            }
+            case "checkmcrmb" -> {
+                int rmb = 0;
+                try {
+                    if (args.length == 1) {
+                        rmb = checkMoney(sender.getName());
+                    } else if (args.length == 2) {
+                        rmb = checkMoney(args[1]);
+                    }
+                } catch (CodeException e) {
+                    return false;
+                }
+                sender.sendMessage(i18n.tr(langCode, "ninvshop.checkmcrmb", rmb));
                 return true;
             }
             case "test" -> {
