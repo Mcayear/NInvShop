@@ -6,7 +6,7 @@
 
     <groupId>cn.vusv.ninvshop</groupId>
     <artifactId>NInvShop</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,6 +15,17 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>repo-lanink-cn</id>
+            <url>https://repo.lanink.cn/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>repo-lanink-cn</id>
+            <url>https://repo.lanink.cn/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
 
     <repositories>
         <repository>
@@ -46,7 +57,8 @@
             <groupId>me.onebone</groupId>
             <artifactId>economyapi</artifactId>
             <version>2.0.2</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/EconomyAPI-2.0.2.jar</systemPath>
         </dependency>
 
         <dependency>

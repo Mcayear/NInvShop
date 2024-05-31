@@ -11,6 +11,7 @@ import cn.ankele.plugin.bean.ItemBean;
 import cn.ankele.plugin.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.LangCode;
 import cn.nukkit.utils.ConfigSection;
@@ -26,8 +27,27 @@ import static java.lang.Integer.parseInt;
 public class Utils {
     public static long getNowTime() {
         Instant timestamp = Instant.now();
-        long millis = timestamp.toEpochMilli();
-        return millis;
+        return timestamp.toEpochMilli();
+    }
+
+    public static Item inBackpack(PlayerInventory playerInv, String str, LangCode langCode) {
+        Item parseItem = parseItemString(str, langCode);
+        if (parseItem.isNull()) return parseItem;
+        if (!(str.startsWith("rcrpg@") || str.startsWith("nweapon@"))) return parseItem;
+        String[] args = str.split("@")[1].split(" ");
+        for (int i = 0; i < playerInv.getSize(); ++i) {
+            Item item = playerInv.getItem(i);
+            if (item.getId() == Item.AIR || item.getCount() <= 0) continue;
+            if (item.getNamedTag() == null) continue;
+            if (!item.getNamedTag().contains("type")) continue;
+            if (!item.getNamedTag().contains("name")) continue;
+            if (item.getNamedTag().getString("type").equals(args[0])
+                    && item.getNamedTag().getString("name").equals(args[1])) {
+                return item;
+            }
+
+        }
+        return parseItem;
     }
 
     public static Item parseItemString(String str, LangCode langCode) {

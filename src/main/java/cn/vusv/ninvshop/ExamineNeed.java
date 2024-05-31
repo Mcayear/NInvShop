@@ -37,15 +37,19 @@ public class ExamineNeed {
                 needPoint += Integer.parseInt(type[1]);
                 continue;
             }
-            Item item = Utils.parseItemString(needArray[i], player.getLanguageCode());
-            if (item == null) {
+            Item item = Utils.inBackpack(player.getInventory(), needArray[i], player.getLanguageCode());
+            if (item.isNull()) {
                 NInvShop.getInstance().getLogger().warning("配置文件中需求有误: " + String.join("||", needArray));
                 return false;
             }
             if (player.getInventory().contains(item)) {
                 itemList.add(item);
             } else {
-                itemNeedList.add((item.getCustomName() != null ? item.getCustomName() : item.getName()) + " §r*" + item.getCount());
+                String itemname = (item.getCustomName() != null ? item.getCustomName() : item.getName()) + " §r*" + item.getCount();
+                if (item.getId() == Item.WRITTEN_BOOK) {
+                    itemname = item.getNamedTag().getString("title");
+                }
+                itemNeedList.add(itemname);
             }
         }
         if (!itemNeedList.isEmpty()) {
