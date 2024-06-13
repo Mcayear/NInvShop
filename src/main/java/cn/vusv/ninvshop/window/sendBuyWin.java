@@ -84,7 +84,10 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
                 return false;
             }
             // 需求满足
-            if (!itemData.isDirect()) player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
+            if (!itemData.isDirect()) {
+                // player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
+                player.sendMessage(itemData.getSuccessMessage().replace("%shopName%", shopPage.getShopName()));
+            }
             if (itemData.getBuyLimits() != null) {
                 PlayerBuyData.addPlayerData(player.getName(), itemData.getBuyLimits().getUid(), count);
             }

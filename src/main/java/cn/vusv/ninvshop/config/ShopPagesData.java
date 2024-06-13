@@ -50,7 +50,7 @@ public class ShopPagesData {
         this.isOnlyConsole = config.getBoolean("onlyConsole", false);
         this.itemList = (List<ShopPagesData.ItemData>) config.getList("data", ImmutableList.of())
                 .stream()
-                .map(item -> new ItemData((Map<String, Object>) item))
+                .map(item -> new ItemData((Map<String, Object>) item, config.getString("successMessage", "[%shopName%] §a购买成功，欢迎下次光临")))
                 .collect(Collectors.toList());
     }
 
@@ -84,8 +84,9 @@ public class ShopPagesData {
         private boolean onlycmd;
         private BuyLimits buyLimits;
         private boolean direct = false;// 直接购买1个
+        private String successMessage = "";
 
-        public ItemData(Map<String, Object> data) {
+        public ItemData(Map<String, Object> data, String successMessage) {
             this.showitem = (String) data.getOrDefault("showitem", "");
             if (data.containsKey("iteminfo")) {
                 this.iteminfo = new ItemInfo((Map<String, Object>) data.getOrDefault("iteminfo", Map.of()));
@@ -100,6 +101,7 @@ public class ShopPagesData {
                 this.buyLimits = new BuyLimits((Map<String, Object>) data.getOrDefault("buyLimits", Map.of()));
             }
             this.direct = (boolean) data.getOrDefault("direct", false);
+            this.successMessage = (String) data.getOrDefault("successMessage", successMessage);
         }
 
         public String getShowitem() {
@@ -140,6 +142,10 @@ public class ShopPagesData {
 
         public boolean isDirect() {
             return direct;
+        }
+
+        public String getSuccessMessage() {
+            return successMessage;
         }
     }
 
