@@ -26,7 +26,8 @@ public class ShopPagesData {
             if (!file.isFile()) continue;
             String fileName = file.getName().replace(".yml", "");
             try {
-                ShopPagesMap.put(fileName, new ShopPagesData(fileName, new Config(file, Config.YAML)));
+                ShopPagesData data = new ShopPagesData(fileName, new Config(file, Config.YAML));
+                ShopPagesMap.put(fileName, data);
             } catch (java.lang.ClassCastException err) {
                 NInvShop.getInstance().getLogger().info("加载失败 "+fileName);
                 throw err;

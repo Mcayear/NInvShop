@@ -65,43 +65,50 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
 
     /**
      * 处理购买
+     *
      * @param player 玩家
-     * @param count 总购买数量，选择数*堆叠数
+     * @param count  总购买数量，选择数*堆叠数
      * @param select 选择的数量
-     * @param item 商品
+     * @param item   商品
      * @return 是否购买成功
      */
     public boolean handleBuy(Player player, int count, int select, Item item) {
         if (!itemData.getNeed().isEmpty()) {
-            String reason = "购买"+item.getCustomName()+" *"+count;
+            String reason = "购买" + item.getCustomName() + " *" + count;
             if (this.itemData.getBuyLimits() != null) {
                 if (!this.itemData.getBuyLimits().getUid().isEmpty()) {
                     reason = this.itemData.getBuyLimits().getUid();
                 }
             }
             if (!ExamineNeed.examineNeed(itemData.getNeed().toArray(new String[0]), player, reason)) {
-                if (!itemData.isDirect()) player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_failed", shopPage.getShopName()));
+                if (!itemData.isDirect())
+                    player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_failed", shopPage.getShopName()));
                 return false;
             }
             // 需求满足
             if (!itemData.isDirect()) {
-                // player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
-                player.sendMessage(itemData.getSuccessMessage().replace("%shopName%", shopPage.getShopName()));
+                if (!itemData.getSuccessMessage().isEmpty()) {
+                    player.sendMessage(itemData.getSuccessMessage().replace("%shopName%", shopPage.getShopName()));
+                } else {
+                    player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.purchase_success", shopPage.getShopName()));
+                }
             }
             if (itemData.getBuyLimits() != null) {
                 PlayerBuyData.addPlayerData(player.getName(), itemData.getBuyLimits().getUid(), count);
             }
         } else {// 不走 need 通道
             Econ pEcon = new Econ(player);
-            int needMoney = itemData.getPrice()*select;
+            int needMoney = itemData.getPrice() * select;
             if (itemData.getPrice() > 0 && needMoney > pEcon.getMoney()) {
+                // 缺少金币时
                 player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.item.not_enough_money", String.valueOf(needMoney - pEcon.getMoney())));
+                return false;
             }
             pEcon.reduceMoney(needMoney);
         }
         if (!itemData.isOnlycmd()) {
             if (item.isNull()) {
-                player.sendMessage("§c物品 "+itemData.getShowitem()+" 不存在");
+                player.sendMessage("§c物品 " + itemData.getShowitem() + " 不存在");
             }
             Utils.addItemToPlayer(player, item);
         }
@@ -126,7 +133,7 @@ public class sendBuyWin implements Listener { //一般实际开发中不在这�
         } else {
             label.add("物品名: " + slotItem.getCustomName() + "§r");
         }
-        if (false) label.add("每份价格: "+itemData.getPrice());
+        if (false) label.add("每份价格: " + itemData.getPrice());
         if (!itemData.getShowNeed().isEmpty()) {
             label.add("每份需求: ");
             label.add(itemData.getShowNeed());
