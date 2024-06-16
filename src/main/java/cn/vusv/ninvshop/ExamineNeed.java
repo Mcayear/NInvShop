@@ -45,11 +45,11 @@ public class ExamineNeed {
             if (player.getInventory().contains(item)) {
                 itemList.add(item);
             } else {
-                String itemname = (item.getCustomName() != null ? item.getCustomName() : item.getName()) + " §r*" + item.getCount();
+                String itemName = (item.getCustomName() != null ? item.getCustomName() : item.getName()) + " §r*" + item.getCount();
                 if (item.getId() == Item.WRITTEN_BOOK) {
-                    itemname = item.getNamedTag().getString("title");
+                    itemName = item.getNamedTag().getString("title");
                 }
-                itemNeedList.add(itemname);
+                itemNeedList.add(itemName);
             }
         }
         if (!itemNeedList.isEmpty()) {

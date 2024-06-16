@@ -1,9 +1,4 @@
-﻿# Multilanguage provided to the plugin, use identifiers=text to specify a multilingual text,such a
-# testplugin.helloworld=Hello World!
-# Support for multilingual text of parameters,such as
-# testplugin.helloworld=Hello {%0}!
-# {%n} will be populated with arguments with index n
-ninvshop.item.item_drop_tips=You had some {%0} that couldn't fit and fell to the ground.
+﻿ninvshop.item.item_drop_tips=You had some {%0} that couldn't fit and fell to the ground.
 ninvshop.item.not_enough_money=You also need {%0} economy!
 ninvshop.item.purchase_failed=[{%0}] §cThe requirements are not met!
 ninvshop.item.purchase_success=[{%0}] §aPurchase successful, welcome to visit next time!
@@ -18,6 +13,13 @@ ninvshop.not_found_page=Not found {%0}！
 
 ninvshop.shopcommand.description=Box Shop Command.
 ninvshop.shopcommand.onlyplayer=Only players are allowed to execute.
+
+ninvshop.window.BatchPurchase.title=Bulk Purchase
+ninvshop.window.BatchPurchase.ItemName=Item Name: {%0}§r
+ninvshop.window.BatchPurchase.RequirementsPerUnit=Requirements Per Unit:
+ninvshop.window.BatchPurchase.QuantityPerUnit=Quantity Per Unit: {%0}§r
+ninvshop.window.BatchPurchase.PurchaseUnits=Number of Units to Purchase
+ninvshop.window.BatchPurchase.SoldOut=§r§c§lThis item is sold out.
 
 ninvshop.cannot.point=§cInsufficient coupon balance, please recharge.{n}The only recharge official website: {%0}
 ninvshop.checkmcrmb=§fYour MCRMB balance: §e{%0}

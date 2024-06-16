@@ -1,9 +1,4 @@
-﻿# Multilanguage provided to the plugin, use identifiers=text to specify a multilingual text,such a
-# testplugin.helloworld=Hello World!
-# Support for multilingual text of parameters,such as
-# testplugin.helloworld=Hello {%0}!
-# {%n} will be populated with arguments with index n
-ninvshop.item.item_drop_tips=你有一些 {%0} 装不下掉到了地上。
+﻿ninvshop.item.item_drop_tips=你有一些 {%0} 装不下掉到了地上。
 ninvshop.item.not_enough_money=你仍缺少 {%0} 经济!
 ninvshop.item.purchase_failed=[{%0}] §c需求不满足
 ninvshop.item.purchase_success=[{%0}] §a购买成功，欢迎下次光临
@@ -18,6 +13,13 @@ ninvshop.not_found_page=页面 {%0} 不存在！
 
 ninvshop.shopcommand.description=箱子商店命令
 ninvshop.shopcommand.onlyplayer=仅允许玩家执行
+
+ninvshop.window.BatchPurchase.title=批量购买
+ninvshop.window.BatchPurchase.ItemName=物品名：{%0}§r
+ninvshop.window.BatchPurchase.RequirementsPerUnit=每份需求：
+ninvshop.window.BatchPurchase.QuantityPerUnit=每份数量：{%0}§r
+ninvshop.window.BatchPurchase.PurchaseUnits=购买份数
+ninvshop.window.BatchPurchase.SoldOut=§r§c§lThis item is sold out.
 
 ninvshop.cannot.point=§c点券余额不足，请充值。{n}唯一赞助地址： {%0}
 ninvshop.checkmcrmb=§f您当前 MCRMB 余额为： §e{%0}
