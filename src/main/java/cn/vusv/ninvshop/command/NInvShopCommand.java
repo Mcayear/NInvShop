@@ -65,18 +65,18 @@ public class NInvShopCommand extends Command {
                 CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
         this.getCommandParameters().put("list-shop", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("ninvshopAdmin", false, new String[]{"x"}),
                 CommandParameter.newEnum("action", false, new String[]{"list"}),
         });
         this.getCommandParameters().put("craft-shop", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("ninvshopAdmin", false, new String[]{"x"}),
                 CommandParameter.newEnum("action", false, new String[]{"craft"}),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING),
                 CommandParameter.newType("row", true, CommandParamType.STRING),
                 CommandParameter.newType("icon", true, CommandParamType.STRING)
         });
         this.getCommandParameters().put("add-slot", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("ninvshopAdmin", false, new String[]{"x"}),
                 CommandParameter.newEnum("action", false, new String[]{"add"}),
                 CommandParameter.newType("prices", false, CommandParamType.INT),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING),
@@ -84,7 +84,7 @@ public class NInvShopCommand extends Command {
                 CommandParameter.newEnum("isOnlyCommands", true, CommandEnum.ENUM_BOOLEAN),
         });
         this.getCommandParameters().put("change-slot", new CommandParameter[]{
-                CommandParameter.newEnum("admin", false, new String[]{"x"}),
+                CommandParameter.newEnum("ninvshopAdmin", false, new String[]{"x"}),
                 CommandParameter.newEnum("action", false, new String[]{"remove", "set"}),
                 CommandParameter.newType("index", false, CommandParamType.INT),
                 CommandParameter.newType("pageName", false, CommandParamType.STRING)

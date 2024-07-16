@@ -1,10 +1,8 @@
 package cn.vusv.ninvshop.window;
 
-import RcTaskBook.Main;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.event.Listener;
 import cn.nukkit.form.element.ElementLabel;
 import cn.nukkit.form.element.ElementSlider;
 import cn.nukkit.form.handler.FormResponseHandler;
@@ -39,12 +37,12 @@ public class sendBuyWin { //一般实际开发中不在这个类中写监听器
         this.shopPage = shopPage_;
         this.itemData = itemData;
         this.slotItem = slotItem;
-        langCode = langCode;
+        langCode = player.getLanguageCode();
         if (itemData.getBuyLimits() == null) {
-            form = buyFrom(new FormWindowCustom(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.title")));
+            form = buyFrom(new FormWindowCustom(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.title")));
         } else {
             int limBuyCount = compLimBuyCount(player, itemData);
-            form = buyLimitsFrom(new FormWindowCustom(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.title")), limBuyCount);
+            form = buyLimitsFrom(new FormWindowCustom(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.title")), limBuyCount);
         }
         form.addHandler(FormResponseHandler.withoutPlayer(ignored -> {
             if (form.wasClosed()) {
@@ -138,23 +136,23 @@ public class sendBuyWin { //一般实际开发中不在这个类中写监听器
             itemName = slotItem.getNamedTag().getString("title");
         }
 
-        label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.ItemName", itemName));
+        label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.ItemName", itemName));
 
 //        if (false) label.add("每份价格: " + itemData.getPrice());
 
         if (!itemData.getShowNeed().isEmpty()) {
-            label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.RequirementsPerUnit"));
+            label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.RequirementsPerUnit"));
             label.add(itemData.getShowNeed());
-            label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.QuantityPerUnit", slotItem.getCount()));
+            label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.QuantityPerUnit", slotItem.getCount()));
         }
         if (limBuyCount == 0) {
             label.add("");
-            label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.SoldOut"));
+            label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.SoldOut"));
         }
         form.addElement(new ElementLabel(String.join("\n", label)));
 
         // 添加一个水平滑块_1 (text, 最小值, 最大值, 滑动最小步数)
-        form.addElement(new ElementSlider(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.PurchaseUnits"), 0, limBuyCount, limBuyCount > 0 ? 1 : 0, limBuyCount > 0 ? 1 : 0));  // 组件角标: 3
+        form.addElement(new ElementSlider(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.PurchaseUnits"), 0, limBuyCount, limBuyCount > 0 ? 1 : 0, limBuyCount > 0 ? 1 : 0));  // 组件角标: 3
         return form;
     }
 
@@ -165,18 +163,18 @@ public class sendBuyWin { //一般实际开发中不在这个类中写监听器
             itemName = slotItem.getNamedTag().getString("title");
         }
 
-        label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.ItemName", itemName));
+        label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.ItemName", itemName));
 
 //        if (false) label.add("每份价格: data.price");
         if (!itemData.getShowNeed().isEmpty()) {
-            label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.RequirementsPerUnit"));
+            label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.RequirementsPerUnit"));
             label.add(itemData.getShowNeed());
-            label.add(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.QuantityPerUnit", slotItem.getCount()));
+            label.add(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.QuantityPerUnit", slotItem.getCount()));
         }
         form.addElement(new ElementLabel(String.join("\n", label)));
 
         // 添加一个水平滑块_1 (text, 最小值, 最大值, 滑动最R@@小步数)
-        form.addElement(new ElementSlider(Main.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.PurchaseUnits"), 0, itemData.getBulkBuy(), 1));  // 组件角标: 3
+        form.addElement(new ElementSlider(NInvShop.getI18n().tr(langCode, "ninvshop.window.BatchPurchase.PurchaseUnits"), 0, itemData.getBulkBuy(), 1));  // 组件角标: 3
         return form;
     }
 }

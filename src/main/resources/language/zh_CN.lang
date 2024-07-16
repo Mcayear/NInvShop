@@ -15,9 +15,9 @@ ninvshop.shopcommand.description=箱子商店命令
 ninvshop.shopcommand.onlyplayer=仅允许玩家执行
 
 ninvshop.window.BatchPurchase.title=批量购买
-ninvshop.window.BatchPurchase.ItemName=物品名：{%0}§r
+ninvshop.window.BatchPurchase.ItemName=物品名： {%0}§r
 ninvshop.window.BatchPurchase.RequirementsPerUnit=每份需求：
-ninvshop.window.BatchPurchase.QuantityPerUnit=每份数量：{%0}§r
+ninvshop.window.BatchPurchase.QuantityPerUnit=每份数量： {%0}§r
 ninvshop.window.BatchPurchase.PurchaseUnits=购买份数
 ninvshop.window.BatchPurchase.SoldOut=§r§c§lThis item is sold out.
 
