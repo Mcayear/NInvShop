@@ -19,7 +19,11 @@ public class ExamineNeed {
     public static boolean examineNeed(String[] needArray, Player player) {
         return examineNeed(needArray, player, "NInvShop 购买商品");
     }
+
     public static boolean examineNeed(String[] needArray, Player player, String reason) {
+        return examineNeed(needArray, player, reason, false);
+    }
+    public static boolean examineNeed(String[] needArray, Player player, String reason, boolean onlyExamine) {
         List<String> itemNeedList = new ArrayList<>();
         List<Item> itemList = new ArrayList<>();
         int needMoney = 0;
@@ -53,7 +57,7 @@ public class ExamineNeed {
             }
         }
         if (!itemNeedList.isEmpty()) {
-            player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.need_failed_msg", String.join("、", itemNeedList)));
+            if (!onlyExamine) player.sendMessage(NInvShop.getI18n().tr(player.getLanguageCode(), "ninvshop.need_failed_msg", String.join("、", itemNeedList)));
             return false;
         }
         Econ EconAPI = new Econ(player);
@@ -83,8 +87,10 @@ public class ExamineNeed {
                 return false;
             }
         }
-        for (Item v : itemList) {
-            player.getInventory().removeItem(v);
+        if (!onlyExamine) {
+            for (Item v : itemList) {
+                player.getInventory().removeItem(v);
+            }
         }
         return true;
     }

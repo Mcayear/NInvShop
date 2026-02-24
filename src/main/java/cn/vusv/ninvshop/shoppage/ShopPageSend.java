@@ -6,6 +6,7 @@ import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.Task;
 import cn.vusv.ninvshop.NInvShop;
 import cn.vusv.ninvshop.config.ShopPagesData;
@@ -126,14 +127,14 @@ public class ShopPageSend {
             }
 
             if (itemData.isDirect()) {
-                Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                Server.getInstance().getScheduler().scheduleDelayedTask(new PluginTask<>(NInvShop.getInstance()) {
                     @Override
                     public void onRun(int i) {
-                        new sendBuyWin(player, shopPage, itemData, item).handleBuy(player, 1, 1, item);
+                        new sendBuyWin(player, shopPage, itemData, item).handleBuy(player, 1, 1, parseItemString(itemData.getShowitem(), player.getLanguageCode()));
                     }
                 }, 17);
             } else {
-                Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                Server.getInstance().getScheduler().scheduleDelayedTask(new PluginTask<>(NInvShop.getInstance()) {
                     @Override
                     public void onRun(int i) {
                         new sendBuyWin(player, shopPage, itemData, item).toPlayer(player);

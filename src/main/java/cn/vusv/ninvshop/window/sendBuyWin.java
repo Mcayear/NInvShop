@@ -58,6 +58,7 @@ public class sendBuyWin { //一般实际开发中不在这个类中写监听器
             }
             player.sendActionBar("购买数量为: " + slider);
 
+            NInvShop.getInstance().getLogger().info(item.toString());
             handleBuy(player, slider, select, item);
         }));
     }
@@ -113,6 +114,7 @@ public class sendBuyWin { //一般实际开发中不在这个类中写监听器
             if (item.isNull()) {
                 player.sendMessage("§c物品 " + itemData.getShowitem() + " 不存在");
             }
+            NInvShop.getInstance().getLogger().info("成功给予玩家："+item.toString());
             Utils.addItemToPlayer(player, item);
         }
         for (String value : itemData.getExeccmd()) {
