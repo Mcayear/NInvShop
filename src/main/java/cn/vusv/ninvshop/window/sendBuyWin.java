@@ -58,7 +58,6 @@ public class sendBuyWin { //一般实际开发中不在这个类中写监听器
             }
             player.sendActionBar("购买数量为: " + slider);
 
-            NInvShop.getInstance().getLogger().info(item.toString());
             handleBuy(player, slider, select, item);
         }));
     }
